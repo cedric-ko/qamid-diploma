@@ -20,6 +20,7 @@ import ru.edu.qamid.databinding.FragmentSplashScreenBinding
 import ru.edu.qamid.dto.SplashScreenData
 import ru.edu.qamid.viewmodel.AuthViewModel
 import javax.inject.Inject
+import ru.edu.qamid.ui.data.SplashIdlingResource
 
 @SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
@@ -141,6 +142,7 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
 
         lifecycleScope.launch {
             authViewModel.nonAuthorizedEvent.collectLatest {
+                SplashIdlingResource.decrement() // это тестовый Idling Resource!!!
                 val action = SplashScreenFragmentDirections
                     .actionSplashScreenFragmentToAuthFragment()
                 findNavController().navigate(action)
@@ -149,6 +151,7 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
 
         lifecycleScope.launch {
             authViewModel.authorizedEvent.collectLatest {
+                SplashIdlingResource.decrement() // это тестовый Idling Resource!!!
                 findNavController().navigate(R.id.action_splashScreenFragment_to_mainFragment)
             }
         }
@@ -230,6 +233,9 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
             setBackgroundResource(splashscreenImage.titleBackground)
             setTextColor(ContextCompat.getColor(context, splashscreenImage.titleColor))
         }
+
+        // это тестовый Idling Resource!!!
+        SplashIdlingResource.increment()
 
         lifecycleScope.launch {
             delay(3_000)

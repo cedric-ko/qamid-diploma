@@ -15,6 +15,7 @@ import ru.edu.qamid.api.qualifier.Refresh
 import ru.edu.qamid.auth.AppAuth
 import ru.edu.qamid.repository.authRepository.AuthRepository
 import javax.inject.Provider
+import ru.edu.qamid.ui.data.IdlingInterceptor
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -54,6 +55,7 @@ object NetworkModule {
         val authInterceptor = AuthInterceptor(appAuth)
         val refreshAuthenticator = RefreshAuthenticator(authRepositoryProvider, appAuth)
         return OkHttpClient.Builder()
+            .addInterceptor(IdlingInterceptor())   // перехватчик для тестового NetworkIdling!!!
             .addInterceptor(interceptor)
             .addInterceptor(authInterceptor)
             .authenticator(refreshAuthenticator)
@@ -64,6 +66,7 @@ object NetworkModule {
     @Provides
     fun nonAuthorizedOkhttp(interceptor: HttpLoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
+            .addInterceptor(IdlingInterceptor())   // перехватчик для тестового NetworkIdling!!!
             .addInterceptor(interceptor)
             .build()
     }
@@ -73,6 +76,7 @@ object NetworkModule {
     fun refreshOkhttp(interceptor: HttpLoggingInterceptor, appAuth: AppAuth): OkHttpClient {
         val refreshInterceptor = RefreshInterceptor(appAuth)
         return OkHttpClient.Builder()
+            .addInterceptor(IdlingInterceptor())   // перехватчик для тестового NetworkIdling!!!
             .addInterceptor(refreshInterceptor)
             .addInterceptor(interceptor)
             .build()

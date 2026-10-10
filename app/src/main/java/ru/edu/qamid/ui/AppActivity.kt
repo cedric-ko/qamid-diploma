@@ -1,5 +1,6 @@
 package ru.edu.qamid.ui
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -11,16 +12,43 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import ru.edu.qamid.R
 import ru.edu.qamid.dto.News
+import ru.edu.qamid.ui.data.NavigationIdlingResource
 import ru.edu.qamid.viewmodel.NewsViewModel
 
 @AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // регистрируем коллбэки для работы NavigationIdlingResource!!!
+        supportFragmentManager.registerFragmentLifecycleCallbacks(
+            object : FragmentManager.FragmentLifecycleCallbacks() {
+                override fun onFragmentPreAttached(
+                    fm: FragmentManager,
+                    f: Fragment,
+                    context: Context
+                ) {
+                    NavigationIdlingResource.getInstance().onPreAttached(f)
+                }
+
+                override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
+                    NavigationIdlingResource.getInstance().onResumed(f)
+                }
+
+                override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+                    NavigationIdlingResource.getInstance().onDestroyed(f)
+                }
+            },
+            true
+        )
+        // конец кода для работы NavigationIdlingResource
+
         setContentView(R.layout.activity_app)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)

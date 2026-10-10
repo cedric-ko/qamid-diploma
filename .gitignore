@@ -45,6 +45,7 @@ captures/
 *.zip
 *.tar.gz
 *.rar
+!allure-results.zip
 
 ### Gradle ###
 !gradle/wrapper/gradle-wrapper.jar
